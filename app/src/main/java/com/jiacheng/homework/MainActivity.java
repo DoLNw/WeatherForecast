@@ -1,5 +1,6 @@
 package com.jiacheng.homework;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
@@ -67,19 +68,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView imgPm;
     private ImageView imgWeather;
 
+    private ImageView imgSelectCity;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         initView();
+        eventBinding();
 
         checkNetState();
     }
 
     private void initView() {
         btnUpdate = findViewById(R.id.title_update_btn);
-        btnUpdate.setOnClickListener(this);
 
         tvCityName = findViewById(R.id.title_city_name);
         tvCity = findViewById(R.id.city);
@@ -95,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         imgPm = findViewById(R.id.pm2_5_img);
         imgWeather = findViewById(R.id.weather_img);
 
+        imgSelectCity = findViewById(R.id.title_city_manager);
+
         tvCityName.setText("N/A");
         tvCity.setText("N/A");
         tvTime.setText("N/A");
@@ -105,6 +110,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvTemperature.setText("N/A");
         tvClimate.setText("N/A");
         tvWind.setText("N/A");
+    }
+
+    private void eventBinding() {
+        btnUpdate.setOnClickListener(this);
+        imgSelectCity.setOnClickListener(this);
     }
 
     @Override
@@ -121,6 +131,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("MiniWeather", "无法连接网络");
                 Toast.makeText(MainActivity.this, "无法连接网络", Toast.LENGTH_LONG).show();
             }
+        } else if(v.getId() == R.id.title_city_manager) {
+            Intent intent = new Intent(this, SelectCityActivity.class);
+            startActivity(intent);
         }
     }
 
@@ -207,70 +220,58 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         if (todayWeather != null) {
                             if (xmlPullParser.getName().equals("city")) {
                                 //解析城市
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setCity(xmlPullParser.getText());
-//                                Log.d("MiniWeather", "city:"+xmlPullParser.getText());
                             } else if (xmlPullParser.getName().equals("updatetime")) {
                                 //解析更新时间
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setUpdateTime(xmlPullParser.getText());
-//                                Log.d("MiniWeather", "updatetime:"+xmlPullParser.getText());
                             } else if (xmlPullParser.getName().equals("shidu")) {
                                 //解析湿度
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setHumidity(xmlPullParser.getText());
-//                                Log.d("MiniWeather", "湿度:"+xmlPullParser.getText());
                             } else if (xmlPullParser.getName().equals("wendu")) {
                                 //解析温度
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setTemperature(xmlPullParser.getText());
-//                                Log.d("MiniWeather", "温度:"+xmlPullParser.getText());
                             } else if (xmlPullParser.getName().equals("pm25")) {
                                 //解析PM2.5
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setPM2_5(xmlPullParser.getText());
-//                                Log.d("MiniWeather", "PM2.5:"+xmlPullParser.getText());
                             } else if (xmlPullParser.getName().equals("quality")) {
                                 //解析空气质量
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setQuality(xmlPullParser.getText());
-//                                Log.d("MiniWeather", "空气质量:"+xmlPullParser.getText());
                             } else if (xmlPullParser.getName().equals("fengxiang") && windDirection==0) {
                                 //解析风向
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setWindDirection(xmlPullParser.getText());
                                 windDirection++;
-//                                Log.d("MiniWeather", "风向:"+xmlPullParser.getText());
                             } else if (xmlPullParser.getName().equals("fengli") && windSpeed==0) {
                                 //解析风力
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setWindSpeed(xmlPullParser.getText());
                                 windSpeed++;
-//                                Log.d("MiniWeather", "风力:"+xmlPullParser.getText());
                             } else if (xmlPullParser.getName().equals("date") && dateCount==0) {
                                 //解析日期
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setDate(xmlPullParser.getText());
                                 dateCount++;
-//                                Log.d("MiniWeather", "日期:"+xmlPullParser.getText());
                             } else if (xmlPullParser.getName().equals("high") && maxmumTemperature==0) {
                                 //解析最高温度
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setMaximumTemperature(xmlPullParser.getText());
                                 maxmumTemperature++;
-//                                Log.d("MiniWeather", "高温:"+xmlPullParser.getText());
                             } else if (xmlPullParser.getName().equals("low") && minimunTemperature==0) {
                                 //解析最低温度
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setMinimumTemperature(xmlPullParser.getText());
                                 minimunTemperature++;
-//                                Log.d("MiniWeather", "最低温度:"+xmlPullParser.getText());
                             } else if (xmlPullParser.getName().equals("type") && typeCount==0) {
                                 //解析天气情况
-                                eventType = xmlPullParser.next();
+                                xmlPullParser.next();
                                 todayWeather.setType(xmlPullParser.getText());
                                 typeCount++;
-//                                Log.d("MiniWeather", "天气情况:"+xmlPullParser.getText());
                             }
                         }
 
