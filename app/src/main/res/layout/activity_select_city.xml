@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFF0F0F0"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <RelativeLayout
         android:id="@+id/title_top"
@@ -42,6 +45,14 @@
 
     </RelativeLayout>
 
+    <com.jiacheng.homework.ClearEditText
+        android:id="@+id/setSearchCity"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="搜索全国城市（中文）"/>
+        <!--android:focusedByDefault="false"-->
+
+
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
@@ -51,7 +62,8 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="所选城市"/>
+            android:text="所选城市"
+            />
 
         <TextView
             android:id="@+id/tvSelectCityName"

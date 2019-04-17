@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tvClimate.setText(todayWeather.getType());
         tvWind.setText("风力" + todayWeather.getWindSpeed());
 
-        Toast.makeText(MainActivity.this, "更新成功", Toast.LENGTH_LONG).show();
+        Toast.makeText(MainActivity.this, "更新成功", Toast.LENGTH_SHORT).show();
     }
 
     private ImageView btnUpdate;
@@ -129,11 +130,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 queryWeather(cityCode);
             } else {
                 Log.d("MiniWeather", "无法连接网络");
-                Toast.makeText(MainActivity.this, "无法连接网络", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "无法连接网络", Toast.LENGTH_SHORT).show();
             }
         } else if(v.getId() == R.id.title_city_manager) {
             Intent intent = new Intent(this, SelectCityActivity.class);
-            startActivity(intent);
+            //转场回来有返回结果
+            startActivityForResult(intent, 0);
+        }
+    }
+
+    //转场回来的返回结果得处理
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        String sCityName = data.getExtras().getString("cityname");
+        String sCityCode = data.getExtras().getString("citycode");
+
+//        if (sCityCode != "") {   这句话不行啊
+        if (sCityCode.length() > 0) {
+            queryWeather(sCityCode);
+            tvCityName.setText(sCityName);
+
+            SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("main_city_code", sCityCode);
+            editor.putString("main_city_name", sCityName);
+            editor.commit();
+
+        } else {
+            SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+            String cityCode = sharedPreferences.getString("main_city_code", "101210701");
+
+            queryWeather(cityCode);
         }
     }
 
@@ -294,10 +323,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void checkNetState() {
         if (NetUtil.getNetworkState(this) != NetUtil.NETWORK_NONE) {
             Log.d("MiniWeather", "网络OK");
-            Toast.makeText(MainActivity.this, "网络OK", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "网络OK", Toast.LENGTH_SHORT).show();
+
+            SharedPreferences sharedPreferences = getSharedPreferences("config", MODE_PRIVATE);
+            String cityCode = sharedPreferences.getString("main_city_code", "101210701");
+
+            queryWeather(cityCode);
         } else {
             Log.d("MiniWeather", "无法连接网络");
-            Toast.makeText(MainActivity.this, "无法连接网络", Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.this, "无法连接网络", Toast.LENGTH_SHORT).show();
         }
     }
 }
